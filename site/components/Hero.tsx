@@ -67,12 +67,6 @@ export function Hero() {
 
         <div className="hero-visual" aria-label="Bumblebee app preview">
           <div className="screenshot-reel">
-            <div className="screenshot-reel-bar">
-              <span />
-              <span />
-              <span />
-              <strong>Bumblebee</strong>
-            </div>
             <div className="screenshot-stage">
               {heroScreenshots.map((shot, index) => (
                 <figure
@@ -93,7 +87,6 @@ export function Hero() {
                       height="1864"
                     />
                   </picture>
-                  <figcaption>{shot.title}</figcaption>
                 </figure>
               ))}
             </div>

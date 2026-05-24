@@ -270,47 +270,15 @@ dd {
 }
 
 .screenshot-reel {
-  overflow: hidden;
   width: 100%;
   max-width: 680px;
   margin-left: auto;
-  border: 1px solid var(--line);
-  background: var(--surface-alt);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
   animation: float-in 800ms ease both;
-}
-
-.screenshot-reel-bar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 28px;
-  padding: 0 12px;
-  background: #2a2928;
-  border-bottom: 1px solid var(--line);
-}
-
-.screenshot-reel-bar span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #5b5d60;
-}
-
-.screenshot-reel-bar strong {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  color: #bbb8b1;
-  font-size: 12px;
 }
 
 .screenshot-stage {
   position: relative;
   aspect-ratio: 16 / 10;
-  background: #111;
 }
 
 .hero-shot {
@@ -332,19 +300,6 @@ dd {
 
 .hero-shot img {
   object-fit: cover;
-}
-
-.hero-shot figcaption {
-  position: absolute;
-  left: 18px;
-  bottom: 18px;
-  padding: 9px 12px;
-  border: 1px solid rgba(245, 189, 90, 0.45);
-  color: #17120b;
-  background: rgba(245, 189, 90, 0.92);
-  font-size: 12px;
-  font-weight: 950;
-  text-transform: uppercase;
 }
 
 .section {
@@ -566,12 +521,6 @@ dd {
 
   .screenshot-reel {
     max-width: none;
-  }
-
-  .hero-shot figcaption {
-    left: 12px;
-    bottom: 12px;
-    font-size: 11px;
   }
 
   .screenshot-card:first-child {
