@@ -1,0 +1,18 @@
+Bumblebee Desktop
+Copyright 2026 Mike Chumba
+
+This product includes and distributes the Bumblebee scanner helper and threat
+catalog format from the upstream Bumblebee project:
+
+  https://github.com/perplexityai/bumblebee
+
+The upstream Bumblebee project is licensed under the Apache License, Version
+2.0. The binary distribution includes a copy of that license.
+
+Threat catalog files bundled with the desktop app are seeded from the upstream
+threat_intel directory and retain their own source references where provided.
+
+This product also uses Flutter, Dart, Material Icons, and the package
+dependencies declared in pubspec.lock. Those components remain under their
+respective licenses.
+
