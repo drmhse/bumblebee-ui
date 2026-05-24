@@ -1,8 +1,8 @@
 # Bumblebee Desktop
 
-Bumblebee Desktop is a macOS endpoint inventory app for local developer-machine supply-chain checks. It wraps the Bumblebee scanner in a desktop UI for scan scope selection, package inventory review, diagnostics, exposure findings, history, and threat catalog management.
+Bumblebee Desktop is a macOS endpoint inventory app for local developer-machine supply-chain checks. It wraps the [Bumblebee scanner](https://github.com/perplexityai/bumblebee) in a desktop UI for scan scope selection, package inventory review, diagnostics, exposure findings, history, and threat catalog management.
 
-The app is designed for a narrow incident-response question: when a known package, extension, or version appears in a threat catalog, does this endpoint have an exact local match in package metadata?
+The app is designed around the upstream scanner's incident-response model: when a known package, extension, or version appears in a [Bumblebee threat catalog](https://github.com/perplexityai/bumblebee/tree/main/threat_intel), does this endpoint have an exact local match in package metadata?
 
 ![Bumblebee dashboard screenshot](screenshots/dashboard.png)
 
