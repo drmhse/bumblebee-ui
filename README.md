@@ -16,26 +16,7 @@ Signed and notarized macOS builds are published on the GitHub releases page:
 
 ## Website
 
-The static landing page lives in [`site/`](site/) and is exported with Next.js for static hosting.
-
-```sh
-cd site
-npm ci
-npm run build
-```
-
-The public site is intended for `https://bumblebee.drmhse.com`.
-
-For Cloudflare Pages, configure the project as a static export:
-
-- Root directory: `site`
-- Build command: `npm run build`
-- Build output directory: `out`
-- Deploy command: leave empty
-
-Do not use `npx wrangler deploy` for this site. That command treats the project
-as a Worker/OpenNext deployment, installs extra packages during deploy, and
-expects a server bundle that this static export intentionally does not produce.
+Public site: https://bumblebee.drmhse.com
 
 ## What The App Shows
 
