@@ -4,6 +4,8 @@ Bumblebee Desktop is a macOS endpoint inventory app for local developer-machine 
 
 The app is designed for a narrow incident-response question: when a known package, extension, or version appears in a threat catalog, does this endpoint have an exact local match in package metadata?
 
+![Bumblebee dashboard screenshot](site/public/screenshots/dashboard.png)
+
 ## Download
 
 Signed and notarized macOS builds are published on the GitHub releases page:
@@ -64,4 +66,3 @@ The desktop app performs local scans through a bundled helper binary. It does no
 This repository is licensed under the Apache License, Version 2.0. See [`LICENSE`](LICENSE).
 
 The bundled scanner and catalog format are derived from the upstream Bumblebee project, also licensed under Apache 2.0. See [`NOTICE`](NOTICE) for attribution.
-
