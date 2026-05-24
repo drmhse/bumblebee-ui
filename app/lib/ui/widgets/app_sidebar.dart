@@ -85,9 +85,66 @@ class AppSidebar extends StatelessWidget {
             icon: Icons.info_outline,
             label: 'ABOUT',
           ),
+          if (controller.updateInfo?.available == true)
+            _UpdateAvailableCard(controller: controller),
           const Spacer(),
           _SidebarActions(controller: controller),
         ],
+      ),
+    );
+  }
+}
+
+class _UpdateAvailableCard extends StatelessWidget {
+  const _UpdateAvailableCard({required this.controller});
+
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = controller.theme;
+    final info = controller.updateInfo!;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(18, 14, 18, 4),
+      child: InkWell(
+        onTap: () => controller.setSection(AppSection.about),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: theme.accent.withValues(alpha: theme.isDark ? 0.14 : 0.2),
+            border: Border.all(color: theme.accent),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.system_update_alt, color: theme.accent, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'UPDATE AVAILABLE',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: theme.text,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${info.latestVersion} for ${info.platformLabel}',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: theme.muted, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

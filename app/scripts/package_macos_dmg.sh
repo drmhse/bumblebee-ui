@@ -10,6 +10,9 @@ NOTARY_PROFILE="${NOTARY_PROFILE:-bumblebee-notary}"
 SECRET_FILE="${SECRET_FILE:-$ROOT/.app_password_and_email.txt}"
 DIST_DIR="${DIST_DIR:-$ROOT/dist/macos}"
 SKIP_NOTARIZE="${SKIP_NOTARIZE:-0}"
+if [[ -n "${BUMP_VERSION:-}" ]]; then
+  "$ROOT/scripts/bump_version.sh" "$BUMP_VERSION" >&2
+fi
 VERSION="$("$ROOT"/scripts/read_pubspec_version.sh)"
 
 read_secret() {

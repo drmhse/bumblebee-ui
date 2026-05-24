@@ -10,10 +10,10 @@ export default function Home() {
     '@type': 'SoftwareApplication',
     name: 'Bumblebee',
     applicationCategory: 'SecurityApplication',
-    operatingSystem: 'macOS',
-    softwareVersion: '1.0.0',
+    operatingSystem: 'macOS, Linux',
+    softwareVersion: '1.0.1',
     description:
-      'A macOS endpoint inventory app for local package scans, diagnostics, and exposure catalog review.',
+      'A desktop endpoint inventory app for local package scans, diagnostics, and exposure catalog review.',
     url: 'https://bumblebee.drmhse.com',
     downloadUrl:
       'https://github.com/drmhse/bumblebee-ui/releases/latest',

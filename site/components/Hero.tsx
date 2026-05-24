@@ -14,7 +14,7 @@ export function Hero() {
 
       <div className="hero-grid">
         <div className="hero-copy">
-          <p className="eyebrow">LOCAL MACOS SCANNER</p>
+          <p className="eyebrow">LOCAL DESKTOP SCANNER</p>
           <h1>Bumblebee</h1>
           <p className="lede">
             A quiet endpoint inventory app for developer machines. Pick a scan
@@ -23,7 +23,7 @@ export function Hero() {
           </p>
           <div className="hero-actions">
             <a className="button primary" href="#download">
-              Download for macOS
+              Download
             </a>
             <a className="button secondary" href="https://github.com/drmhse/bumblebee-ui">
               Star on GitHub
@@ -32,7 +32,7 @@ export function Hero() {
           <dl className="terminal-stats" aria-label="Release status">
             <div>
               <dt>RELEASE</dt>
-              <dd>1.0.0</dd>
+              <dd>1.0.1</dd>
             </div>
             <div>
               <dt>SIGNING</dt>
@@ -40,7 +40,7 @@ export function Hero() {
             </div>
             <div>
               <dt>ARCH</dt>
-              <dd>ARM64 + X64</dd>
+              <dd>MAC + LINUX</dd>
             </div>
           </dl>
         </div>

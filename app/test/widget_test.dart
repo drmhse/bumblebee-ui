@@ -10,7 +10,13 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(const BumblebeeApp(loadHistoryOnStartup: false));
+    await tester.pumpWidget(
+      const BumblebeeApp(
+        loadHistoryOnStartup: false,
+        checkForUpdatesOnStartup: false,
+        syncCatalogsOnStartup: false,
+      ),
+    );
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
     expect(find.text('BUMBLEBEE'), findsOneWidget);

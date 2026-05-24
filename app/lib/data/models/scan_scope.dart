@@ -25,5 +25,12 @@ class ScanScope {
   final List<String> notes;
   final DateTime verifiedAt;
 
-  bool matches(ScanConfig config) => profile == config.profile;
+  bool matches(ScanConfig config) {
+    if (profile != config.profile) return false;
+    if (profile != ScanProfile.deep) return true;
+    final expected = config.normalizedRoots;
+    if (expected.length != roots.length) return false;
+    final actual = roots.map((root) => root.path).toSet();
+    return expected.every(actual.contains);
+  }
 }

@@ -38,12 +38,20 @@ class ScanResult {
   String get status {
     final value = summary?.stringValue('status');
     if (value != null && value.isNotEmpty) return value;
-    return completedAt == null ? 'running' : 'complete';
+    if (completedAt == null) return 'running';
+    if (summary == null) return exitCode == 0 ? 'missing_summary' : 'error';
+    return exitCode == 0 ? 'complete' : 'error';
   }
+
+  bool get hasCompleteSummary =>
+      summary != null && status == 'complete' && exitCode == 0;
 
   String get runId => summary?.stringValue('run_id') ?? id;
   String get profile => summary?.stringValue('profile') ?? 'baseline';
   int get packageCount => _summaryCount('package', packages.length);
+  int get packageRecordsSuppressed =>
+      summary?.intValue('package_records_suppressed') ?? 0;
+  int get packageRecordsChecked => packageCount + packageRecordsSuppressed;
   int get findingsCount =>
       summary?.intValue('findings_emitted') ?? findings.length;
   int get diagnosticsCount =>

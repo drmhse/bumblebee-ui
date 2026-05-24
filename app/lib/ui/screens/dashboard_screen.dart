@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../data/models/scan_config.dart';
 import '../../state/app_controller.dart';
 import '../widgets/diagnostics_panel.dart';
 import '../widgets/findings_panel.dart';
@@ -45,7 +46,7 @@ class DashboardScreen extends StatelessWidget {
                 shrinkWrap: true,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                childAspectRatio: columns == 2 ? 1.8 : 1.45,
+                childAspectRatio: columns == 2 ? 1.55 : 1.18,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   _MetricCard(
@@ -124,6 +125,10 @@ class _ScanSetup extends StatelessWidget {
     final roots = controller.config.normalizedRoots;
     final scope = controller.verifiedScope;
     final scopeMatches = scope?.matches(controller.config) ?? false;
+    final canScan =
+        !controller.scanning &&
+        !controller.verifyingScope &&
+        (controller.config.profile != ScanProfile.deep || scopeMatches);
     return Panel(
       child: Column(
         children: [
@@ -133,8 +138,7 @@ class _ScanSetup extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
-                  'ACTIVE SCOPE: ${controller.config.profile.name.toUpperCase()}'
-                  '${roots.isEmpty ? '' : ' • ${roots.join(', ')}'}',
+                  'ACTIVE SCOPE: ${controller.config.profile.name.toUpperCase()}',
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: bee.text,
@@ -190,7 +194,7 @@ class _ScanSetup extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                FilledButton.icon(
+                OutlinedButton.icon(
                   onPressed: controller.scanning || controller.verifyingScope
                       ? null
                       : controller.pickDeepRoot,
@@ -201,12 +205,24 @@ class _ScanSetup extends StatelessWidget {
                     controller.verifyingScope ? 'VERIFYING' : 'BROWSE',
                   ),
                 ),
+                const SizedBox(width: 12),
+                FilledButton.icon(
+                  onPressed: canScan ? controller.runScan : null,
+                  icon: const Icon(Icons.play_arrow),
+                  label: const Text('SCAN NOW'),
+                ),
               ],
             ),
-          ],
-          if (scopeMatches) ...[
-            const SizedBox(height: 16),
-            _VerifiedScopeSummary(controller: controller),
+            if (scopeMatches) ...[
+              const SizedBox(height: 10),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'Root is valid. Start the scan when ready.',
+                  style: TextStyle(color: bee.muted, fontSize: 12),
+                ),
+              ),
+            ],
           ],
         ],
       ),
@@ -223,67 +239,30 @@ class _ScopeStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bee = context.bee;
-    final verified = rootCount > 0;
+    final valid = rootCount > 0;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           verifying
               ? Icons.sync
-              : verified
+              : valid
               ? Icons.check_circle_outline
               : Icons.radio_button_unchecked,
-          color: verified ? bee.success : bee.muted,
+          color: valid ? bee.success : bee.muted,
           size: 20,
         ),
         const SizedBox(width: 8),
         Text(
           verifying
-              ? 'VERIFYING'
-              : verified
-              ? '$rootCount ROOT${rootCount == 1 ? '' : 'S'} VERIFIED'
-              : 'NOT VERIFIED',
+              ? 'CHECKING ROOT'
+              : valid
+              ? '$rootCount VALID ROOT${rootCount == 1 ? '' : 'S'}'
+              : 'ROOT NOT READY',
           style: TextStyle(
-            color: verified ? bee.success : bee.muted,
+            color: valid ? bee.success : bee.muted,
             fontWeight: FontWeight.w900,
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class _VerifiedScopeSummary extends StatelessWidget {
-  const _VerifiedScopeSummary({required this.controller});
-
-  final AppController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final bee = context.bee;
-    final scope = controller.verifiedScope;
-    if (scope == null) return const SizedBox.shrink();
-    final roots = scope.roots
-        .take(3)
-        .map((root) {
-          return '${root.label.toUpperCase()} ${root.path}';
-        })
-        .join('  |  ');
-    return Row(
-      children: [
-        Icon(Icons.fact_check_outlined, color: bee.accent, size: 18),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            roots,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: bee.muted, fontWeight: FontWeight.w700),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          'VERIFIED ${scope.verifiedAt.toLocal().toString().split('.').first}',
-          style: TextStyle(color: bee.muted, fontSize: 12),
         ),
       ],
     );
@@ -307,26 +286,31 @@ class _MetricCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bee = context.bee;
     final card = Panel(
+      padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(color: bee.muted, fontWeight: FontWeight.w900),
           ),
-          const Spacer(),
+          const SizedBox(height: 12),
           Text(
             value,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: bee.text,
-              fontSize: 34,
+              fontSize: 28,
               fontWeight: FontWeight.w300,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             note.toUpperCase(),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: bee.muted,
               fontSize: 12,
@@ -415,7 +399,7 @@ class _RootsPanel extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        root['kind']?.toString().toUpperCase() ?? 'ROOT',
+                        _rootKindLabel(root['kind']?.toString()),
                         style: TextStyle(
                           color: bee.accent,
                           fontWeight: FontWeight.w900,
@@ -436,6 +420,13 @@ class _RootsPanel extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _rootKindLabel(String? kind) {
+    if (kind == null || kind.isEmpty || kind == 'unknown') {
+      return 'EXPLICIT ROOT';
+    }
+    return kind.replaceAll('_', ' ').toUpperCase();
   }
 }
 

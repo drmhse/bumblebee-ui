@@ -1,6 +1,6 @@
 # Bumblebee Desktop
 
-Bumblebee Desktop is a macOS endpoint inventory app for local developer-machine supply-chain checks. It wraps the [Bumblebee scanner](https://github.com/perplexityai/bumblebee) in a desktop UI for scan scope selection, package inventory review, diagnostics, exposure findings, history, and threat catalog management.
+Bumblebee Desktop is an endpoint inventory app for local developer-machine supply-chain checks. It wraps the [Bumblebee scanner](https://github.com/perplexityai/bumblebee) in a desktop UI for scan scope selection, package inventory review, diagnostics, exposure findings, history, and threat catalog management.
 
 The app is designed around the upstream scanner's incident-response model: when a known package, extension, or version appears in a [Bumblebee threat catalog](https://github.com/perplexityai/bumblebee/tree/main/threat_intel), does this endpoint have an exact local match in package metadata?
 
@@ -8,10 +8,11 @@ The app is designed around the upstream scanner's incident-response model: when 
 
 ## Download
 
-Signed and notarized macOS builds are published on the GitHub releases page:
+Signed desktop builds are published on the GitHub releases page:
 
-- [Apple Silicon DMG](https://github.com/drmhse/bumblebee-ui/releases/latest/download/Bumblebee-1.0.0-1-arm64.dmg)
-- [Intel Mac DMG](https://github.com/drmhse/bumblebee-ui/releases/latest/download/Bumblebee-1.0.0-1-x64.dmg)
+- [Apple Silicon DMG](https://github.com/drmhse/bumblebee-ui/releases/latest/download/Bumblebee-1.0.1-2-arm64.dmg)
+- [Intel Mac DMG](https://github.com/drmhse/bumblebee-ui/releases/latest/download/Bumblebee-1.0.1-2-x64.dmg)
+- [Ubuntu/Linux x64 tarball](https://github.com/drmhse/bumblebee-ui/releases/latest/download/Bumblebee-1.0.1-2-linux-x64.tar.gz) - early, untested package; issues are welcome.
 - [All releases](https://github.com/drmhse/bumblebee-ui/releases)
 
 ## Website
@@ -39,13 +40,13 @@ The scanner and catalog format come from:
 
 ## Local Build Notes
 
-The Flutter app source is built from the local `app/` project in this working tree. The release DMGs contain:
+The Flutter app source is built from the local `app/` project in this working tree. The release packages contain:
 
-- `Bumblebee.app`
+- the Bumblebee desktop application
 - Apache 2.0 license text
 - distribution notice and upstream attribution
 
-The bundled helper binaries are built from upstream Bumblebee `v0.1.1` for each target architecture and pruned so each macOS DMG carries only the matching helper.
+The bundled helper binaries are built from upstream Bumblebee `v0.1.1` for each target architecture and pruned so each package carries only the matching helper.
 
 ## Security Posture
 

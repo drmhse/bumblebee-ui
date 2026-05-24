@@ -34,6 +34,10 @@ class ThreatCatalogService {
     'shopsprint-decimal-typosquat.json',
     'gemstuffer.json',
   ];
+  static const upstreamContentsApi =
+      'https://api.github.com/repos/perplexityai/bumblebee/contents/threat_intel?ref=main';
+  static const upstreamRawBase =
+      'https://raw.githubusercontent.com/perplexityai/bumblebee/main/threat_intel/';
 
   Future<Directory> ensureCatalogs() async {
     final dir = await _paths.catalogDir();
@@ -74,13 +78,16 @@ class ThreatCatalogService {
     final dir = await ensureCatalogs();
     var updated = 0;
     final client = HttpClient();
+    client.connectionTimeout = const Duration(seconds: 8);
     try {
-      for (final name in catalogFiles) {
-        final uri = Uri.parse(
-          'https://raw.githubusercontent.com/perplexityai/bumblebee/main/threat_intel/$name',
-        );
+      final names = await _upstreamCatalogFiles(client);
+      for (final name in names) {
+        final uri = Uri.parse('$upstreamRawBase$name');
         final request = await client.getUrl(uri);
-        final response = await request.close();
+        request.headers.set(HttpHeaders.userAgentHeader, 'Bumblebee Desktop');
+        final response = await request.close().timeout(
+          const Duration(seconds: 12),
+        );
         if (response.statusCode != 200) continue;
         final text = await utf8.decodeStream(response);
         await File('${dir.path}/$name').writeAsString(text);
@@ -90,6 +97,29 @@ class ThreatCatalogService {
       client.close(force: true);
     }
     return updated;
+  }
+
+  Future<List<String>> _upstreamCatalogFiles(HttpClient client) async {
+    final request = await client.getUrl(Uri.parse(upstreamContentsApi));
+    request.headers.set(
+      HttpHeaders.acceptHeader,
+      'application/vnd.github+json',
+    );
+    request.headers.set(HttpHeaders.userAgentHeader, 'Bumblebee Desktop');
+    final response = await request.close().timeout(const Duration(seconds: 12));
+    if (response.statusCode != 200) return catalogFiles;
+    final body = await utf8.decodeStream(response);
+    final json = jsonDecode(body);
+    if (json is! List) return catalogFiles;
+    final names = <String>[];
+    for (final item in json) {
+      if (item is! Map) continue;
+      if (item['type'] != 'file') continue;
+      final name = (item['name'] ?? '').toString();
+      if (name.endsWith('.json')) names.add(name);
+    }
+    names.sort();
+    return names.isEmpty ? catalogFiles : names;
   }
 
   Future<ThreatCatalogInfo> _infoFor(File file) async {

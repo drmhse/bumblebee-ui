@@ -4,9 +4,16 @@ import '../state/app_controller.dart';
 import 'shell/main_shell.dart';
 
 class BumblebeeApp extends StatefulWidget {
-  const BumblebeeApp({super.key, this.loadHistoryOnStartup = true});
+  const BumblebeeApp({
+    super.key,
+    this.loadHistoryOnStartup = true,
+    this.checkForUpdatesOnStartup = true,
+    this.syncCatalogsOnStartup = true,
+  });
 
   final bool loadHistoryOnStartup;
+  final bool checkForUpdatesOnStartup;
+  final bool syncCatalogsOnStartup;
 
   @override
   State<BumblebeeApp> createState() => _BumblebeeAppState();
@@ -19,7 +26,11 @@ class _BumblebeeAppState extends State<BumblebeeApp> {
   void initState() {
     super.initState();
     controller = AppController()
-      ..initialize(loadHistory: widget.loadHistoryOnStartup);
+      ..initialize(
+        loadHistory: widget.loadHistoryOnStartup,
+        checkForUpdatesOnStartup: widget.checkForUpdatesOnStartup,
+        syncCatalogsOnStartup: widget.syncCatalogsOnStartup,
+      );
   }
 
   @override

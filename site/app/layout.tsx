@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 const siteUrl = 'https://bumblebee.drmhse.com';
-const title = 'Bumblebee - Endpoint Inventory for macOS';
+const title = 'Bumblebee - Endpoint Inventory for Developer Machines';
 const description =
   'Bumblebee scans local developer endpoints for package inventory, diagnostics, and known exposure catalog matches.';
 
@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     'package inventory',
     'developer security',
     'macOS scanner',
+    'Linux scanner',
     'software supply chain',
     'threat catalog',
   ],

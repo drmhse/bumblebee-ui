@@ -70,6 +70,8 @@ class AboutScreen extends StatelessWidget {
                 value: controller.binaryPath ?? 'Helper binary not resolved',
               ),
               const SizedBox(height: 14),
+              _UpdateBlock(controller: controller),
+              const SizedBox(height: 14),
               const _SourceLinks(),
             ],
           ),
@@ -145,6 +147,72 @@ class AboutScreen extends StatelessWidget {
   }
 }
 
+class _UpdateBlock extends StatelessWidget {
+  const _UpdateBlock({required this.controller});
+
+  final AppController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.bee;
+    final info = controller.updateInfo;
+    final status = controller.checkingForUpdates
+        ? 'Checking GitHub releases...'
+        : info == null
+        ? 'Current version ${AppController.appVersion}.'
+        : info.available
+        ? 'Update available: ${info.latestVersion} for ${info.platformLabel}.'
+        : info.newerReleaseAvailable
+        ? 'Release ${info.latestVersion} is newer, but no ${info.platformLabel} download was found.'
+        : 'Bumblebee is current at ${info.currentVersion}.';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'UPDATES',
+          style: TextStyle(color: theme.muted, fontWeight: FontWeight.w900),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(status, style: TextStyle(color: theme.text)),
+            OutlinedButton.icon(
+              onPressed: controller.checkingForUpdates
+                  ? null
+                  : controller.checkForUpdates,
+              icon: Icon(
+                controller.checkingForUpdates ? Icons.sync : Icons.update,
+                color: theme.muted,
+                size: 18,
+              ),
+              label: Text(
+                controller.checkingForUpdates
+                    ? 'CHECKING'
+                    : 'CHECK GITHUB RELEASES',
+              ),
+            ),
+            if (info != null && info.available)
+              FilledButton.icon(
+                onPressed: () => _LinkChip.open(context, info.assetUrl!),
+                icon: const Icon(Icons.download_outlined, size: 18),
+                label: Text('DOWNLOAD ${info.assetName ?? 'UPDATE'}'),
+              ),
+            if (info != null && info.newerReleaseAvailable)
+              OutlinedButton.icon(
+                onPressed: () => _LinkChip.open(context, info.releaseUrl),
+                icon: Icon(Icons.open_in_new, color: theme.muted, size: 18),
+                label: const Text('OPEN RELEASE'),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
 class _SourceLinks extends StatelessWidget {
   const _SourceLinks();
 
@@ -191,14 +259,17 @@ class _LinkChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.bee;
-    return OutlinedButton.icon(
-      onPressed: () => _open(context, url),
-      icon: Icon(Icons.open_in_new, color: theme.accent, size: 18),
-      label: Text(label.toUpperCase()),
+    return TextButton.icon(
+      onPressed: () => open(context, url),
+      icon: Icon(Icons.open_in_new, color: theme.muted, size: 16),
+      label: Text(
+        label,
+        style: TextStyle(color: theme.muted, fontWeight: FontWeight.w800),
+      ),
     );
   }
 
-  static Future<void> _open(BuildContext context, String url) async {
+  static Future<void> open(BuildContext context, String url) async {
     final uri = Uri.parse(url);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (!context.mounted) return;

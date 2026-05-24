@@ -4,8 +4,8 @@ const faqs = [
     a: 'The desktop app is designed around local scanning and local history. Catalog sync fetches catalog JSON from the upstream source when the user requests it.',
   },
   {
-    q: 'Which macOS builds are available?',
-    a: 'The release publishes separate signed DMGs for Apple Silicon and Intel Macs.',
+    q: 'Which builds are available?',
+    a: 'The release publishes Apple Silicon and Intel Mac DMGs, plus an early untested Ubuntu/Linux x64 tarball. Issues are welcome.',
   },
   {
     q: 'Where does the threat catalog come from?',

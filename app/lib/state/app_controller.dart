@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 
+import '../build_info.dart';
 import '../core/theme/bee_theme.dart';
 import '../data/models/bumblebee_record.dart';
 import '../data/models/scan_config.dart';
@@ -13,6 +14,7 @@ import '../data/services/bumblebee_binary_resolver.dart';
 import '../data/services/scan_history_store.dart';
 import '../data/services/scan_runner.dart';
 import '../data/services/threat_catalog_service.dart';
+import '../data/services/update_service.dart';
 
 enum AppSection { dashboard, inventory, threatIntel, history, about }
 
@@ -21,12 +23,14 @@ class AppController extends ChangeNotifier {
     : _paths = AppPaths(),
       _catalogService = ThreatCatalogService(AppPaths()),
       _historyStore = ScanHistoryStore(AppPaths()),
-      _runner = ScanRunner(BumblebeeBinaryResolver());
+      _runner = ScanRunner(BumblebeeBinaryResolver()),
+      _updateService = UpdateService();
 
   final AppPaths _paths;
   final ThreatCatalogService _catalogService;
   final ScanHistoryStore _historyStore;
   final ScanRunner _runner;
+  final UpdateService _updateService;
 
   BeeThemeId themeId = BeeThemeId.command;
   AppSection section = AppSection.dashboard;
@@ -42,12 +46,17 @@ class AppController extends ChangeNotifier {
   String? errorMessage;
   String? binaryPath;
   String? scannerVersion;
+  UpdateInfo? updateInfo;
+  bool checkingForUpdates = false;
   String localHostname = Platform.localHostname;
   String inventoryQuery = '';
   String inventoryEcosystem = 'ALL';
   String? inventoryRoot;
-  static const appVersion = '1.0.0+1';
+  static const appVersion = BuildInfo.version;
   static const bundleIdentifier = 'bumblebee.drmhse.com';
+  static const fakeUpdateVersion = String.fromEnvironment(
+    'BUMBLEBEE_FAKE_UPDATE_VERSION',
+  );
 
   BeeTheme get theme => BeeThemes.byId(themeId);
   String get endpointLabel {
@@ -56,7 +65,11 @@ class AppController extends ChangeNotifier {
     return localHostname;
   }
 
-  Future<void> initialize({bool loadHistory = true}) async {
+  Future<void> initialize({
+    bool loadHistory = true,
+    bool checkForUpdatesOnStartup = true,
+    bool syncCatalogsOnStartup = true,
+  }) async {
     try {
       await _paths.supportDir();
       catalogs = await _catalogService.listCatalogs().timeout(
@@ -72,16 +85,35 @@ class AppController extends ChangeNotifier {
     if (loadHistory) {
       unawaited(_loadHistoryAfterStartup());
     }
+    if (syncCatalogsOnStartup) {
+      unawaited(syncCatalogs(quiet: true));
+    }
+    if (fakeUpdateVersion.isNotEmpty) {
+      _showFakeUpdate();
+    } else if (checkForUpdatesOnStartup) {
+      unawaited(checkForUpdates(quiet: true));
+    }
   }
 
   Future<void> _loadHistoryAfterStartup() async {
     try {
       history = await _historyStore.load().timeout(const Duration(seconds: 8));
+      if (currentResult == null && history.isNotEmpty) {
+        currentResult = _mostRecentResult(history);
+      }
     } catch (error) {
       errorMessage = 'History warning: $error';
       history = [];
     }
     notifyListeners();
+  }
+
+  ScanResult _mostRecentResult(List<ScanResult> results) {
+    return results.reduce((latest, next) {
+      final latestTime = latest.completedAt ?? latest.startedAt;
+      final nextTime = next.completedAt ?? next.startedAt;
+      return nextTime.isAfter(latestTime) ? next : latest;
+    });
   }
 
   void setTheme(BeeThemeId id) {
@@ -218,16 +250,16 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  Future<void> syncCatalogs() async {
+  Future<void> syncCatalogs({bool quiet = false}) async {
     if (syncingCatalogs) return;
     syncingCatalogs = true;
-    errorMessage = null;
+    if (!quiet) errorMessage = null;
     notifyListeners();
     try {
       await _catalogService.syncFromUpstream();
       catalogs = await _catalogService.listCatalogs();
     } catch (error) {
-      errorMessage = 'Catalog sync failed: $error';
+      if (!quiet) errorMessage = 'Catalog sync failed: $error';
     } finally {
       syncingCatalogs = false;
       notifyListeners();
@@ -240,6 +272,37 @@ class AppController extends ChangeNotifier {
     if (file == null) return;
     await _catalogService.importCatalog(File(file.path));
     catalogs = await _catalogService.listCatalogs();
+    notifyListeners();
+  }
+
+  Future<void> checkForUpdates({bool quiet = false}) async {
+    if (checkingForUpdates) return;
+    checkingForUpdates = true;
+    if (!quiet) errorMessage = null;
+    notifyListeners();
+    try {
+      updateInfo = await _updateService.check(appVersion);
+    } catch (error) {
+      if (!quiet) errorMessage = 'Update check failed: $error';
+    } finally {
+      checkingForUpdates = false;
+      notifyListeners();
+    }
+  }
+
+  void _showFakeUpdate() {
+    final label = UpdateService.currentPlatformLabel();
+    final suffix = label == 'Apple Silicon Mac' ? 'arm64' : 'x64';
+    updateInfo = UpdateInfo(
+      currentVersion: appVersion.split('+').first,
+      latestVersion: fakeUpdateVersion,
+      releaseUrl: UpdateService.releasesUrl,
+      newerReleaseAvailable: true,
+      compatibleAssetAvailable: true,
+      platformLabel: label,
+      assetName: 'Bumblebee-$fakeUpdateVersion-preview-$suffix.dmg',
+      assetUrl: UpdateService.releasesUrl,
+    );
     notifyListeners();
   }
 

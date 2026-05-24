@@ -29,6 +29,11 @@ class ScanStatusPanel extends StatelessWidget {
         : result == null
         ? 'Ready'
         : result.status;
+    final snapshotTime = result?.completedAt
+        ?.toLocal()
+        .toString()
+        .split('.')
+        .first;
 
     return Panel(
       child: Column(
@@ -78,6 +83,17 @@ class ScanStatusPanel extends StatelessWidget {
               ),
             ],
           ),
+          if (snapshotTime != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              'SNAPSHOT FROM $snapshotTime',
+              style: TextStyle(
+                color: bee.muted,
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ],
           const SizedBox(height: 20),
           LinearProgressIndicator(
             value: progressValue,
@@ -90,8 +106,8 @@ class ScanStatusPanel extends StatelessWidget {
             runSpacing: 12,
             children: [
               _StatusStat(
-                label: 'Package records',
-                value: '${result?.packages.length ?? 0}',
+                label: 'Packages checked',
+                value: '${result?.packageRecordsChecked ?? 0}',
               ),
               _StatusStat(
                 label: 'Findings',
@@ -140,11 +156,11 @@ class _ScanOutcome {
         severity: _OutcomeSeverity.neutral,
       );
     }
-    if (result.packageCount == 0) {
+    if (!result.hasCompleteSummary) {
       return _ScanOutcome(
-        title: 'NO PACKAGE RECORDS SCANNED',
+        title: 'SCAN NOT AUTHORITATIVE',
         detail:
-            'Bumblebee completed with ${result.diagnosticsCount} diagnostics. Check that the selected root contains supported package metadata.',
+            'Result status is ${result.status}. Review diagnostics before trusting this run.',
         icon: Icons.report_problem_outlined,
         severity: _OutcomeSeverity.warning,
       );
@@ -153,14 +169,24 @@ class _ScanOutcome {
       return _ScanOutcome(
         title: 'EXPOSURES DETECTED',
         detail:
-            'Known catalog matches: ${result.findingsCount}. ${result.packageCount} package records checked.',
+            'Known catalog matches: ${result.findingsCount}. ${result.packageRecordsChecked} package records checked.',
         icon: Icons.warning_amber,
         severity: _OutcomeSeverity.danger,
       );
     }
+    if (result.packageRecordsChecked == 0) {
+      return _ScanOutcome(
+        title: 'NO PACKAGE RECORDS SCANNED',
+        detail:
+            'Bumblebee completed with ${result.diagnosticsCount} diagnostics. Check that the selected root contains supported package metadata.',
+        icon: Icons.report_problem_outlined,
+        severity: _OutcomeSeverity.warning,
+      );
+    }
     return _ScanOutcome(
       title: 'NO EXPOSURES DETECTED',
-      detail: '${result.packageCount} package records checked.',
+      detail:
+          'No catalog matches in ${result.packageRecordsChecked} checked package records.',
       icon: Icons.verified_user_outlined,
       severity: _OutcomeSeverity.success,
     );

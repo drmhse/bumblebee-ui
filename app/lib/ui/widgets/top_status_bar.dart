@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/models/scan_config.dart';
+import '../../data/services/window_chrome_service.dart';
 import '../../state/app_controller.dart';
 
 class TopStatusBar extends StatelessWidget {
@@ -19,7 +20,13 @@ class TopStatusBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Spacer(),
+          Expanded(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onDoubleTap: WindowChromeService.performTitlebarDoubleClick,
+              child: const SizedBox.expand(),
+            ),
+          ),
           _ProfilePicker(controller: controller),
           const SizedBox(width: 28),
           FilledButton.icon(

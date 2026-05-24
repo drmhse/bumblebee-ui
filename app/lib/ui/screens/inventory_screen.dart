@@ -54,7 +54,12 @@ class _InventoryScreenState extends State<InventoryScreen> {
         : (pageStart + _pageSize).clamp(0, records.length);
     final visibleRecords = records.sublist(pageStart, pageEnd);
     final ecosystems = _ecosystems();
-    final total = widget.controller.currentResult?.packages.length ?? 0;
+    final result = widget.controller.currentResult;
+    final total = result?.packages.length ?? 0;
+    final inventorySuppressed =
+        result != null && total == 0 && result.packageRecordsSuppressed > 0;
+    final findingsOnlyPending =
+        result == null && widget.controller.config.findingsOnly;
     return Padding(
       padding: const EdgeInsets.all(34),
       child: Column(
@@ -131,17 +136,11 @@ class _InventoryScreenState extends State<InventoryScreen> {
           const SizedBox(height: 24),
           Expanded(
             child: total == 0
-                ? EmptyState(
-                    icon: Icons.inventory_2_outlined,
-                    title: 'No Inventory Yet',
-                    message:
-                        'Run a scan from the Dashboard to populate package inventory.',
-                    action: FilledButton.icon(
-                      onPressed: () =>
-                          widget.controller.setSection(AppSection.dashboard),
-                      icon: const Icon(Icons.play_arrow),
-                      label: const Text('GO TO DASHBOARD'),
-                    ),
+                ? _InventoryEmptyState(
+                    controller: widget.controller,
+                    checkedCount: result?.packageRecordsChecked ?? 0,
+                    inventorySuppressed: inventorySuppressed,
+                    findingsOnlyPending: findingsOnlyPending,
                   )
                 : Panel(
                     padding: EdgeInsets.zero,
@@ -216,6 +215,47 @@ class _InventoryScreenState extends State<InventoryScreen> {
   }
 }
 
+class _InventoryEmptyState extends StatelessWidget {
+  const _InventoryEmptyState({
+    required this.controller,
+    required this.checkedCount,
+    required this.inventorySuppressed,
+    required this.findingsOnlyPending,
+  });
+
+  final AppController controller;
+  final int checkedCount;
+  final bool inventorySuppressed;
+  final bool findingsOnlyPending;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = inventorySuppressed
+        ? 'Inventory Suppressed'
+        : findingsOnlyPending
+        ? 'Findings-Only Mode'
+        : 'No Inventory Yet';
+    final message = inventorySuppressed
+        ? 'This scan checked $checkedCount package records in findings-only mode, so package rows were not stored. Turn off Findings Only and run the scan again to browse inventory.'
+        : findingsOnlyPending
+        ? 'Findings-only scans skip package inventory rows. Turn it off before running a scan if you want this page populated.'
+        : 'Run a scan from the Dashboard to populate package inventory.';
+
+    return EmptyState(
+      icon: inventorySuppressed || findingsOnlyPending
+          ? Icons.visibility_off_outlined
+          : Icons.inventory_2_outlined,
+      title: title,
+      message: message,
+      action: FilledButton.icon(
+        onPressed: () => controller.setSection(AppSection.dashboard),
+        icon: const Icon(Icons.play_arrow),
+        label: const Text('GO TO DASHBOARD'),
+      ),
+    );
+  }
+}
+
 class _ActiveRootFilter extends StatelessWidget {
   const _ActiveRootFilter({required this.root, required this.onClear});
 
@@ -272,16 +312,23 @@ class _HeaderRow extends StatelessWidget {
         border: Border(bottom: BorderSide(color: bee.border)),
       ),
       child: Row(
-        children: const [
-          Expanded(flex: 5, child: Text('PACKAGE')),
-          SizedBox(width: 16),
-          Expanded(flex: 1, child: Text('VERSION')),
-          SizedBox(width: 16),
-          Expanded(flex: 1, child: Text('ECOSYSTEM')),
-          SizedBox(width: 16),
-          Expanded(flex: 1, child: Text('CONFIDENCE')),
-          SizedBox(width: 16),
-          Expanded(flex: 4, child: Text('SOURCE FILE')),
+        children: [
+          const Expanded(flex: 5, child: Text('PACKAGE')),
+          const SizedBox(width: 16),
+          const Expanded(flex: 1, child: Text('VERSION')),
+          const SizedBox(width: 16),
+          const Expanded(flex: 1, child: Text('ECOSYSTEM')),
+          const SizedBox(width: 16),
+          const Expanded(
+            flex: 1,
+            child: Tooltip(
+              message:
+                  'Evidence quality: high means exact package and version from canonical metadata; low can be a config reference rather than installed-version proof.',
+              child: Text('EVIDENCE'),
+            ),
+          ),
+          const SizedBox(width: 16),
+          const Expanded(flex: 4, child: Text('SOURCE FILE')),
         ],
       ),
     );
@@ -296,6 +343,7 @@ class _PackageRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bee = context.bee;
+    final confidence = record.stringValue('confidence').toLowerCase();
     return Container(
       constraints: const BoxConstraints(minHeight: 64),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
@@ -332,9 +380,12 @@ class _PackageRow extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             flex: 1,
-            child: _Badge(
-              text: record.stringValue('confidence').toUpperCase(),
-              color: bee.success,
+            child: Tooltip(
+              message: _evidenceHelp(confidence),
+              child: _Badge(
+                text: confidence.toUpperCase(),
+                color: _evidenceColor(bee, confidence),
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -349,6 +400,23 @@ class _PackageRow extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color _evidenceColor(dynamic bee, String confidence) {
+    return switch (confidence) {
+      'high' => bee.success,
+      'medium' => bee.warning,
+      _ => bee.muted,
+    };
+  }
+
+  String _evidenceHelp(String confidence) {
+    return switch (confidence) {
+      'high' => 'Exact identity and version from canonical package metadata.',
+      'medium' => 'Reliable identity, but version or source is partial.',
+      _ =>
+        'Config/path/spec reference only; not installed exact-version proof.',
+    };
   }
 }
 
