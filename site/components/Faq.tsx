@@ -5,7 +5,7 @@ const faqs = [
   },
   {
     q: 'Which macOS builds are available?',
-    a: 'The release publishes separate notarized DMGs for Apple Silicon and Intel Macs.',
+    a: 'The release publishes separate signed DMGs for Apple Silicon and Intel Macs.',
   },
   {
     q: 'Where does the threat catalog come from?',
@@ -14,10 +14,6 @@ const faqs = [
   {
     q: 'Where is the source code?',
     a: 'The desktop app release page and static website source are published at github.com/drmhse/bumblebee-ui. Stars are useful because this project is intentionally public.',
-  },
-  {
-    q: 'Is the site static?',
-    a: 'Yes. The Next.js site is exported to static HTML, CSS, and assets for Cloudflare Pages.',
   },
 ];
 

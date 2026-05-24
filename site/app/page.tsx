@@ -2,7 +2,6 @@ import { DownloadSection } from '@/components/DownloadSection';
 import { Faq } from '@/components/Faq';
 import { FeatureGrid } from '@/components/FeatureGrid';
 import { Hero } from '@/components/Hero';
-import { SecurityNotes } from '@/components/SecurityNotes';
 import { ScreenshotShowcase } from '@/components/ScreenshotShowcase';
 
 export default function Home() {
@@ -39,7 +38,6 @@ export default function Home() {
       <Hero />
       <FeatureGrid />
       <ScreenshotShowcase />
-      <SecurityNotes />
       <Faq />
       <DownloadSection />
     </main>

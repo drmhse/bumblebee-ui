@@ -52,7 +52,14 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title,
     description,
-    images: ['/og/bumblebee-og.png'],
+    images: [
+      {
+        url: '/og/bumblebee-og.png',
+        width: 1200,
+        height: 630,
+        alt: 'Bumblebee endpoint inventory app',
+      },
+    ],
   },
   category: 'technology',
 };

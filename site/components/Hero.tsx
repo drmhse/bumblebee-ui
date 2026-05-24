@@ -7,7 +7,6 @@ export function Hero() {
         <BrandMark compact />
         <div className="nav-links">
           <a href="#screenshots">Screenshots</a>
-          <a href="#security">Catalog</a>
           <a href="#download">Download</a>
           <a href="https://github.com/drmhse/bumblebee-ui">GitHub stars</a>
         </div>
@@ -37,7 +36,7 @@ export function Hero() {
             </div>
             <div>
               <dt>SIGNING</dt>
-              <dd>NOTARIZED</dd>
+              <dd>SIGNED</dd>
             </div>
             <div>
               <dt>ARCH</dt>

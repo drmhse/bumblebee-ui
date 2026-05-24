@@ -8,8 +8,8 @@ export function DownloadSection() {
         <p className="eyebrow">SIGNED RELEASE</p>
         <h2 id="download-heading">Download Bumblebee for macOS.</h2>
         <p>
-          Choose the build for your Mac. Both DMGs are signed with Developer ID
-          Application, notarized by Apple, and published from the public GitHub
+          Choose the build for your Mac. The DMGs are signed by Developer ID
+          Application: Mike Chumba and published from the public GitHub
           release.
         </p>
       </div>

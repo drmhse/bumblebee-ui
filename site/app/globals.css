@@ -32,6 +32,7 @@ body {
   background-size: 64px 64px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   letter-spacing: 0;
+  overflow-x: hidden;
 }
 
 a {
@@ -47,13 +48,15 @@ img {
 .hero,
 .section,
 .download {
-  width: min(var(--max), calc(100% - 40px));
+  width: calc(100% - 40px);
+  max-width: var(--max);
   margin: 0 auto;
 }
 
 .hero {
   min-height: 92vh;
   padding: 26px 0 70px;
+  overflow: hidden;
 }
 
 .nav {
@@ -69,6 +72,7 @@ img {
   display: flex;
   align-items: center;
   gap: 22px;
+  min-width: 0;
   color: var(--muted);
   font-size: 14px;
   font-weight: 800;
@@ -117,10 +121,24 @@ img {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.78fr) minmax(520px, 1fr);
-  gap: 46px;
+  grid-template-columns: minmax(500px, 0.82fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 58px);
   align-items: center;
   padding-top: 64px;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.hero-visual {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .eyebrow {
@@ -139,8 +157,9 @@ p {
 }
 
 h1 {
+  max-width: 100%;
   margin-bottom: 20px;
-  font-size: clamp(56px, 8vw, 104px);
+  font-size: clamp(56px, 7vw, 104px);
   line-height: 0.9;
   font-weight: 950;
 }
@@ -162,6 +181,7 @@ h3 {
 .lede,
 .section p,
 .download p {
+  max-width: 100%;
   color: #c9c5bc;
   font-size: 18px;
   line-height: 1.7;
@@ -173,6 +193,7 @@ h3 {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 28px;
+  min-width: 0;
 }
 
 .button {
@@ -185,6 +206,8 @@ h3 {
   border-radius: 999px;
   font-weight: 950;
   text-transform: uppercase;
+  min-width: 0;
+  text-align: center;
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }
 
@@ -227,6 +250,7 @@ h3 {
 }
 
 .terminal-stats div {
+  min-width: 0;
   padding: 18px;
 }
 
@@ -245,6 +269,9 @@ dd {
 
 .window {
   overflow: hidden;
+  width: 100%;
+  max-width: 610px;
+  margin-left: auto;
   border: 1px solid var(--line);
   background: var(--surface-alt);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.42);
@@ -280,23 +307,23 @@ dd {
 
 .app-frame {
   display: grid;
-  grid-template-columns: 190px 1fr;
-  min-height: 520px;
+  grid-template-columns: minmax(150px, 0.36fr) minmax(0, 1fr);
+  min-height: 430px;
 }
 
 .app-frame aside {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 30px 18px;
+  gap: 16px;
+  padding: 28px 18px;
   border-right: 1px solid var(--line-soft);
 }
 
 .app-frame aside b,
 .app-frame aside span {
-  padding: 14px 10px;
+  padding: 12px 10px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: clamp(11px, 1vw, 13px);
   font-weight: 950;
 }
 
@@ -336,21 +363,21 @@ dd {
 
 .scan-card,
 .progress-card {
-  margin-top: 34px;
-  padding: 28px;
+  margin-top: 30px;
+  padding: clamp(18px, 2.2vw, 28px);
   border: 1px solid var(--line);
   background: var(--surface);
 }
 
 .scan-card p {
   margin-bottom: 12px;
-  font-size: 23px;
+  font-size: clamp(19px, 2vw, 23px);
   font-weight: 950;
 }
 
 .scan-card strong {
   color: var(--green);
-  font-size: 17px;
+  font-size: clamp(15px, 1.4vw, 17px);
 }
 
 .pulse-card {
@@ -387,7 +414,7 @@ dd {
   display: block;
   margin-top: 8px;
   color: var(--text);
-  font-size: 20px;
+  font-size: clamp(16px, 1.8vw, 20px);
 }
 
 .section {
@@ -464,39 +491,6 @@ dd {
   line-height: 1.55;
 }
 
-.split {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(420px, 1fr);
-  gap: 28px;
-  align-items: start;
-}
-
-.terminal-panel {
-  padding: 20px;
-}
-
-.terminal-panel div {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 15px 0;
-  border-bottom: 1px solid var(--line-soft);
-}
-
-.terminal-panel div:last-child {
-  border-bottom: 0;
-}
-
-.terminal-panel span {
-  color: var(--text);
-  font-weight: 950;
-}
-
-.terminal-panel b {
-  color: var(--accent);
-  white-space: nowrap;
-}
-
 .download {
   display: flex;
   align-items: center;
@@ -505,6 +499,10 @@ dd {
   margin-top: 86px;
   margin-bottom: 40px;
   padding: 32px;
+}
+
+.download > * {
+  min-width: 0;
 }
 
 .download h2 {
@@ -548,13 +546,18 @@ dd {
 
 @media (max-width: 980px) {
   .hero-grid,
-  .split,
   .download {
     grid-template-columns: 1fr;
   }
 
   .hero-grid {
     display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .window {
+    max-width: none;
+    margin-left: 0;
   }
 
   .feature-grid,
@@ -572,7 +575,12 @@ dd {
   .hero,
   .section,
   .download {
-    width: min(100% - 24px, var(--max));
+    width: calc(100% - 24px);
+  }
+
+  .hero {
+    min-height: auto;
+    padding-bottom: 52px;
   }
 
   .nav,
@@ -587,15 +595,43 @@ dd {
 
   .hero-grid {
     grid-template-columns: 1fr;
+    gap: 34px;
     padding-top: 42px;
   }
 
-  .hero-visual {
-    overflow-x: auto;
+  .hero-copy,
+  .section-heading,
+  .download > div {
+    width: 100%;
+    min-width: 0;
   }
 
-  .window {
-    min-width: 720px;
+  h1 {
+    font-size: clamp(42px, 12.5vw, 52px);
+  }
+
+  .lede,
+  .section p,
+  .download p {
+    font-size: 16px;
+    overflow-wrap: anywhere;
+  }
+
+  .hero-actions,
+  .download-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .button {
+    width: 100%;
+    min-width: 0;
+    padding: 0 16px;
+  }
+
+  .hero-visual {
+    display: none;
   }
 
   .screenshot-card:first-child {
