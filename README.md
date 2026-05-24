@@ -4,7 +4,7 @@ Bumblebee Desktop is a macOS endpoint inventory app for local developer-machine 
 
 The app is designed for a narrow incident-response question: when a known package, extension, or version appears in a threat catalog, does this endpoint have an exact local match in package metadata?
 
-![Bumblebee dashboard screenshot](site/public/screenshots/dashboard.png)
+![Bumblebee dashboard screenshot](screenshots/dashboard.png)
 
 ## Download
 

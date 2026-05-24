@@ -5,9 +5,9 @@ const screenshots = [
     text: 'One status surface for findings, diagnostics, scan progress, scope, and inventory composition.',
   },
   {
-    src: '/screenshots/diagnostics.png',
-    title: 'Diagnostics',
-    text: 'Warnings remain inspectable so configuration issues are not reduced to a single count.',
+    src: '/screenshots/inventory.png',
+    title: 'Inventory',
+    text: 'Search and filter scanned packages with ecosystem, confidence, source, root, and pagination context.',
   },
   {
     src: '/screenshots/about.png',
