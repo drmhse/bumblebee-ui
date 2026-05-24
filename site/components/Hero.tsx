@@ -1,4 +1,24 @@
+import type { CSSProperties } from 'react';
+
 import { BrandMark } from './BrandMark';
+
+const heroScreenshots = [
+  {
+    src: '/screenshots/dashboard.png',
+    srcSet: '/screenshots/dashboard-960.webp 960w, /screenshots/dashboard-1600.webp 1600w',
+    title: 'Dashboard',
+  },
+  {
+    src: '/screenshots/inventory.png',
+    srcSet: '/screenshots/inventory-960.webp 960w, /screenshots/inventory-1600.webp 1600w',
+    title: 'Inventory',
+  },
+  {
+    src: '/screenshots/about.png',
+    srcSet: '/screenshots/about-960.webp 960w, /screenshots/about-1600.webp 1600w',
+    title: 'About',
+  },
+];
 
 export function Hero() {
   return (
@@ -46,44 +66,36 @@ export function Hero() {
         </div>
 
         <div className="hero-visual" aria-label="Bumblebee app preview">
-          <div className="window">
-            <div className="window-bar">
+          <div className="screenshot-reel">
+            <div className="screenshot-reel-bar">
               <span />
               <span />
               <span />
               <strong>Bumblebee</strong>
             </div>
-            <div className="app-frame">
-              <aside>
-                <BrandMark />
-                <b>DASHBOARD</b>
-                <span>INVENTORY</span>
-                <span>THREAT INTEL</span>
-                <span>HISTORY</span>
-              </aside>
-              <div className="app-main">
-                <div className="app-top">
-                  <span>BASELINE</span>
-                  <button>RUN SCAN</button>
-                </div>
-                <div className="scan-card pulse-card">
-                  <p>NO EXPOSURES DETECTED</p>
-                  <strong>103543 package records checked. Status: complete.</strong>
-                </div>
-                <div className="progress-card">
-                  <div className="progress-head">
-                    <span>SCAN PROGRESS</span>
-                    <b>COMPLETE</b>
-                  </div>
-                  <div className="progress-line" />
-                  <div className="progress-grid">
-                    <span>PACKAGES<br /><b>103543</b></span>
-                    <span>FINDINGS<br /><b>0</b></span>
-                    <span>DIAGNOSTICS<br /><b>8</b></span>
-                    <span>FILES<br /><b>2030886</b></span>
-                  </div>
-                </div>
-              </div>
+            <div className="screenshot-stage">
+              {heroScreenshots.map((shot, index) => (
+                <figure
+                  className="hero-shot"
+                  key={shot.title}
+                  style={{ '--shot-index': index } as CSSProperties}
+                >
+                  <picture>
+                    <source
+                      srcSet={shot.srcSet}
+                      sizes="(max-width: 980px) calc(100vw - 24px), 680px"
+                      type="image/webp"
+                    />
+                    <img
+                      src={shot.src}
+                      alt={`Bumblebee ${shot.title} screen`}
+                      width="2688"
+                      height="1864"
+                    />
+                  </picture>
+                  <figcaption>{shot.title}</figcaption>
+                </figure>
+              ))}
             </div>
           </div>
         </div>
