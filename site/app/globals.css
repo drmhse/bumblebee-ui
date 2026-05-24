@@ -121,8 +121,8 @@ img {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 520px) minmax(480px, 1fr);
-  gap: clamp(56px, 7vw, 96px);
+  grid-template-columns: minmax(0, 480px) minmax(500px, 1fr);
+  gap: clamp(18px, 2.4vw, 30px);
   align-items: center;
   padding-top: 64px;
 }
@@ -131,7 +131,7 @@ img {
   position: relative;
   z-index: 2;
   min-width: 0;
-  max-width: 520px;
+  max-width: 480px;
 }
 
 .hero-visual {
@@ -161,7 +161,7 @@ p {
 h1 {
   max-width: 100%;
   margin-bottom: 20px;
-  font-size: clamp(56px, 6.4vw, 92px);
+  font-size: clamp(56px, 6vw, 86px);
   line-height: 0.9;
   font-weight: 950;
 }
@@ -272,21 +272,22 @@ dd {
 .screenshot-reel {
   width: 100%;
   max-width: 680px;
-  margin-left: auto;
   animation: float-in 800ms ease both;
 }
 
 .screenshot-stage {
   position: relative;
   aspect-ratio: 16 / 10;
+  overflow: visible;
 }
 
 .hero-shot {
   position: absolute;
   inset: 0;
   margin: 0;
-  opacity: 0;
-  transform: translateX(8%) scale(0.97);
+  opacity: 0.32;
+  transform: translateX(12%) scale(0.94);
+  transform-origin: center;
   animation: screenshot-cycle 12s ease-in-out infinite;
   animation-delay: calc(var(--shot-index) * 4s);
 }
@@ -349,6 +350,7 @@ dd {
 }
 
 .screenshot-card:first-child {
+  grid-column: auto;
   grid-row: span 2;
 }
 
@@ -359,8 +361,7 @@ dd {
 }
 
 .screenshot-card img {
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
+  height: auto;
   background: #111;
   border-bottom: 1px solid var(--line);
 }
@@ -416,16 +417,52 @@ dd {
 }
 
 @keyframes screenshot-cycle {
-  0%,
-  26% {
+  0% {
     opacity: 1;
     transform: translateX(0) scale(1);
+    z-index: 3;
   }
 
-  33%,
-  100% {
+  24% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    z-index: 3;
+  }
+
+  33% {
+    opacity: 0.28;
+    transform: translateX(-18%) scale(0.94);
+    z-index: 1;
+  }
+
+  34% {
     opacity: 0;
-    transform: translateX(-8%) scale(0.97);
+    transform: translateX(18%) scale(0.92);
+    z-index: 0;
+  }
+
+  66% {
+    opacity: 0;
+    transform: translateX(18%) scale(0.92);
+    z-index: 0;
+  }
+
+  74% {
+    opacity: 0.32;
+    transform: translateX(12%) scale(0.94);
+    z-index: 2;
+  }
+
+  92% {
+    opacity: 0.32;
+    transform: translateX(12%) scale(0.94);
+    z-index: 2;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    z-index: 3;
   }
 }
 
@@ -455,6 +492,10 @@ dd {
     grid-template-columns: 1fr 1fr;
   }
 
+  .screenshot-card:first-child {
+    grid-row: auto;
+  }
+
   .download {
     display: grid;
   }
@@ -472,14 +513,50 @@ dd {
     padding-bottom: 52px;
   }
 
-  .nav,
-  .nav-links,
   .terminal-stats,
   .feature-grid,
   .faq-grid,
   .screenshots {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .nav {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    align-items: start;
+    padding-bottom: 22px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+    padding: 6px;
+    overflow-x: auto;
+    border: 1px solid var(--line-soft);
+    background: var(--surface-alt);
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    display: inline-flex;
+    flex: 1 0 max-content;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--line-soft);
+    background: var(--panel);
+    font-size: 12px;
+    text-align: center;
+    white-space: nowrap;
   }
 
   .hero-grid {
@@ -523,8 +600,25 @@ dd {
     max-width: none;
   }
 
-  .screenshot-card:first-child {
-    grid-row: auto;
+  .section {
+    padding-top: 58px;
+  }
+
+  .screenshots {
+    gap: 18px;
+  }
+
+  .screenshot-card figcaption {
+    gap: 6px;
+    padding: 14px;
+  }
+
+  .screenshot-card strong {
+    font-size: 17px;
+  }
+
+  .screenshot-card span {
+    font-size: 14px;
   }
 
   .brand strong {
